@@ -16,9 +16,8 @@ struct comanda
  
 int main()
 {
-    // ---------------------------------------------------------
-    // CUANTOS ARCHIVOS DIARIOS SE VAN A UNIR
-    // ---------------------------------------------------------
+    // --------------------------------------------CUANTOS ARCHIVOS DIARIOS SE VAN A UNIR-------------------------------------------------------
+
     int cant;
     cout << "Cantidad de archivos diarios a unir (1-" << MAX_ARCHIVOS << "): ";
     cin >> cant;
@@ -33,9 +32,9 @@ int main()
     comanda actual[MAX_ARCHIVOS]; // registro actual de cada archivo
     bool hay[MAX_ARCHIVOS];       // true si el archivo todavia tiene un registro disponible
  
-    // ---------------------------------------------------------
-    // APERTURA DE LOS ARCHIVOS + LECTURA ANTICIPADA
-    // ---------------------------------------------------------
+   
+    // ----------------------------------------------------BUSCADOR DE ARCHIVOS-----------------------------------------------------------------
+
     for (int i = 0; i < cant; i++)
     {
         int dia, mesArchivo, anio;
@@ -72,9 +71,9 @@ int main()
         hay[i] = (fread(&actual[i], sizeof(comanda), 1, archivos[i]) == 1);
     }
  
-    // ---------------------------------------------------------
-    // ARCHIVO DE SALIDA
-    // ---------------------------------------------------------
+    
+    // ------------------------------------------------------CREACION DE ARCHIVO----------------------------------------------------------------
+    
     int semana = 0;
     int mes = 0;
     cout << "\nNumero de mes: ";
@@ -93,10 +92,10 @@ int main()
         return 1;
     }
  
-    // ---------------------------------------------------------
-    // APAREO DE LOS ARCHIVOS (ordenado por idmozo)
+    
+    // ------------------------------------------------------------------APAREO----------------------------------------------------------------- 
     // Imprime la planilla y escribe el archivo de salida a la vez.
-    // ---------------------------------------------------------
+   
     cout << "\n"
          << left << setw(12) << "MOZO" << setw(10) << "CODPROD"
          << setw(10) << "CANTIDAD" << setw(10) << "COMISION" << "\n";
@@ -128,9 +127,9 @@ int main()
         hay[menor] = (fread(&actual[menor], sizeof(comanda), 1, archivos[menor]) == 1);
     }
  
-    // ---------------------------------------------------------
-    // CIERRE
-    // ---------------------------------------------------------
+  
+    // --------------------------------------------------------------CIERRE-----------------------------------------------------------------
+   
     for (int i = 0; i < cant; i++)
         fclose(archivos[i]);
     fclose(salida);
