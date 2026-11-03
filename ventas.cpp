@@ -6,27 +6,27 @@ struct ComandaHistorica {
 	char  fecha[11];         // "DD-MM-AAAA" 
 	char  nombreMozo[50];   // el nombre completo, repetido en cada venta 
 	int codigoProducto;
-	int cantidad;  
+	int cantidad;
 	float comision;
 };
 
 struct Producto {
-	int   codigo;  
-	char descripcion[50];  
-	float precio;   
+	int   codigo;
+	char descripcion[50];
+	float precio;
 	int stockActual;
 };
-struct Mozo { 
-	int idMozo; 
-	char nombre[50]; 
-	char password[20]; 
-	float totalComision; 
+struct Mozo {
+	int idMozo;
+	char nombre[50];
+	char password[20];
+	float totalComision;
 };
-struct Comanda { 
-	int idMozo; 
-	int codigoProducto; 
-	int cantidad; 
-	float comision; 
+struct Comanda {
+	int idMozo;
+	int codigoProducto;
+	int cantidad;
+	float comision;
 };
 struct Nodo {
 	Comanda info;
@@ -46,7 +46,7 @@ const float TASA_COMISION = 0.10f;   // la comision de cada venta es el 10% de l
 float precio(const char* Archivo, int cod); // busca el pecio
 void actualizar(const char* Archivo, int cod, int cantidadVendida); // actualiza el stock
 void pedirventa(const char* Archivo); // pide la venta
-bool valido(int cod,const char* Archivo);// verifica el mozo
+bool valido(int cod, const char* Archivo);// verifica el mozo
 bool password(char pass[], char mpass[]); // verifica la contraseña del mozo
 void ordenar(const char* Archivo); // ordena la planilla por mozo
 void planilla(int dia, int mes, int anio, char nombre[]); // crea la planilla del día
@@ -56,7 +56,7 @@ void borrarLista(Nodo*& lista);
 int busquedaBinaria(const char* Archivo, int valor);
 
 
-int main(){
+int main() {
 	// funcion fecha 
 	int dia, mes, anio; // Pide la fecha del día
 	cout << "Ingrese la fecha (DD MM AAAA): ";
@@ -64,12 +64,12 @@ int main(){
 	bool fecha = validarFecha(dia, mes, anio);
 	while (!fecha) {
 		cout << "fecha incorrecta, ingresela nuevamente" << endl;
-		cin >> dia >> mes >> anio; 
+		cin >> dia >> mes >> anio;
 		fecha = validarFecha(dia, mes, anio);
 	}
 	char planillaDia[30];
 	planilla(dia, mes, anio, planillaDia); // crea la planilla del día
-	pedirventa(planillaDia	); 
+	pedirventa(planillaDia);
 
 	return 0;
 }
@@ -98,23 +98,23 @@ void actualizar(const char* Archivo, int cod, int cantidadVendida) {
 		return;
 	}
 	FILE* f = fopen(Archivo, "rb+"); // abro el archivo
-		if (f == NULL) {
-			cout << "Error al abrir el archivo de inventario." << endl; // si no se puede abrir el archivo
-			return; // para que no se ejecute el resto de la funcion
-		}
-		Producto prod;
-		fseek(f, pos * sizeof(Producto), SEEK_SET); // me muevo a la posicion del producto
-		fread(&prod, sizeof(Producto), 1, f);// leo el producto
-		prod.stockActual -= cantidadVendida; // resto la cantidad vendida
-		fseek(f, -sizeof(Producto), SEEK_CUR); // vuelvo al producto a modificar
-		fwrite(&prod, sizeof(Producto), 1, f); // escribo el producto actualizado
-		cout << "Stock actual: " << prod.stockActual << endl; // muestro el stock actual
-		if (prod.stockActual <= 0) {
-			cout << "stock agotado" << endl;// si no hay mas stock
-				
-		}
-		fclose(f);// cierro el archivo 
-		cout << "Stock actualizado con exito" << endl;
+	if (f == NULL) {
+		cout << "Error al abrir el archivo de inventario." << endl; // si no se puede abrir el archivo
+		return; // para que no se ejecute el resto de la funcion
+	}
+	Producto prod;
+	fseek(f, pos * sizeof(Producto), SEEK_SET); // me muevo a la posicion del producto
+	fread(&prod, sizeof(Producto), 1, f);// leo el producto
+	prod.stockActual -= cantidadVendida; // resto la cantidad vendida
+	fseek(f, -sizeof(Producto), SEEK_CUR); // vuelvo al producto a modificar
+	fwrite(&prod, sizeof(Producto), 1, f); // escribo el producto actualizado
+	cout << "Stock actual: " << prod.stockActual << endl; // muestro el stock actual
+	if (prod.stockActual <= 0) {
+		cout << "stock agotado" << endl;// si no hay mas stock
+
+	}
+	fclose(f);// cierro el archivo 
+	cout << "Stock actualizado con exito" << endl;
 }
 
 
@@ -157,13 +157,13 @@ void pedirventa(const char* Archivo) {
 		actualizar("datos/inventario.dat", c.codigoProducto, c.cantidad);
 		cout << "Ingrese 0 para terminar o 1 para continuar: ";
 		cin >> n;
-	
-	}	
+
+	}
 	fclose(f); // cierro el archivo para poder usar ordenar 
 	ordenar(Archivo);
 }
 
-bool valido(int cod,const char* Archivo) {
+bool valido(int cod, const char* Archivo) {
 	FILE* f = fopen(Archivo, "rb");
 	if (f == NULL) {
 		cout << "Error al abrir el archivo de mozos." << endl;
@@ -186,7 +186,7 @@ bool valido(int cod,const char* Archivo) {
 	return false;
 }
 
-bool password(char pass [], char mpass[]) {
+bool password(char pass[], char mpass[]) {
 	int k = 8;
 	int i = 0;
 	while (pass[i] != '\0' && mpass[i] != '\0') {
@@ -196,7 +196,7 @@ bool password(char pass [], char mpass[]) {
 		}
 		i++;
 	}
-	if (pass[i] != '\0' || mpass[i] != '\0'){
+	if (pass[i] != '\0' || mpass[i] != '\0') {
 		cout << "contraseña incorrecta" << endl;
 		return false;
 	}
@@ -212,7 +212,7 @@ void ordenar(const char* Archivo) { // funcion que pasa a una lista ordenada por
 	Nodo* lista = NULL;
 	Comanda c;
 	int leido = fread(&c, sizeof(Comanda), 1, f);
-	while (leido == 1) {  
+	while (leido == 1) {
 		lista = insertarOrdenado(lista, c); // inserto en la lista ordenada por mozo
 		leido = fread(&c, sizeof(Comanda), 1, f);
 	}
@@ -234,8 +234,8 @@ void ordenar(const char* Archivo) { // funcion que pasa a una lista ordenada por
 }
 
 void planilla(int dia, int mes, int anio, char nombre[]) {
-// Abre o crea la planilla de ese día 
- sprintf(nombre, "comandas_%02d-%02d-%04d.dat",dia,mes,anio);
+	// Abre o crea la planilla de ese día 
+	sprintf(nombre, "comandas_%02d-%02d-%04d.dat", dia, mes, anio);
 	FILE* f = fopen(nombre, "ab+");
 	if (f == NULL) {
 		cout << "Error al abrir el archivo de comandas." << endl;
@@ -251,13 +251,13 @@ bool validarFecha(int dia, int mes, int anio) {
 	if (mes < 1 || mes > 12) {
 		return false;
 	}
-	if (anio > 2026) {
+	if (anio < 2025) {
 		return false;
 	}
 	switch (mes) {
 	case 1:
-	case 3: 
-	case 5: 
+	case 3:
+	case 5:
 	case 7:
 	case 8:
 	case 10:
@@ -307,7 +307,11 @@ int busquedaBinaria(const char* Archivo, int cod) {
 		return -1;
 	}
 	Producto prod;
-	int item = 8;// cambiar si se modifica la cantidad de productos en el archivo
+	// calcular cantidad de registros
+	fseek(f, 0, SEEK_END);// me muevo al final del archivo
+	long tamanioArchivo = ftell(f);//cuantos bytes tiene el archivo
+	int item = tamanioArchivo / sizeof(Producto);// cuantos productos hay en el archivo
+
 	int medio;
 	int izquierda = 0; // posicion inicial
 	int derecha = item - 1; // posicion final
