@@ -32,7 +32,7 @@ struct Comanda {
 };
 
 int cargarMozo(Mozo lista[]) { // CARGAR LOS MOZOS de "mozos.dat"
-    FILE* archivoMozo = fopen("datos/mozos.dat", "rb");
+    FILE* archivoMozo = fopen("datos/mozos.dat", "rb"); // SE TIENE QUE CAMBIAR
     if(archivoMozo == NULL) {
         cout << "Error al abrir mozos.dat" << endl;
         return -1;

@@ -317,7 +317,7 @@ void actualizarStock(){ // se actualiza el numero de stock del producto
 	ComandaHistorica comanda;
 	Producto prod;
 	while (fread(&comanda, sizeof(ComandaHistorica), 1, fCom) == 1){ // bucle de lectura
-		long pos = busquedabinaria( "datos/inventario.dat", comanda.codProd, prod);
+		long pos = busquedabinaria( "datos/inventario.dat", comanda.codProd, prod); //llamamos a la funcion que creamos
 			if (pos != -1){
 			prod.stockActual -= comanda.cantidad;
 			fseek(fInv, pos * sizeof(Producto), SEEK_SET); // descuenta del archivo inventario
@@ -388,7 +388,7 @@ void generarPlanillasPorDia() {
             char nombreArchivoDia[60];
             sprintf(nombreArchivoDia, "datos/comandas_%s.dat", ch.fecha);
 
-			// LÍNEAS AGREGADAS: Verificamos si es una fecha nueva para agregarla a la lista[cite: 1]
+			//Verificamos si es una fecha nueva para agregarla a la lista[cite: 1]
             bool yaEstaEnLista = false;
             for (int i = 0; i < cantFechas; i++) {
                 if (strcmp(fechasEncontradas[i], ch.fecha) == 0) {
@@ -415,7 +415,7 @@ void generarPlanillasPorDia() {
 	// LÍNEAS AGREGADAS: ACÁ SE LLAMA A ORDENAR: Recorremos las fechas y ordenamos cada planilla[cite: 1]
     for (int i = 0; i < cantFechas; i++) {
         char nombreArchivo[60];
-        sprintf(nombreArchivo, "comandas_%s.dat", fechasEncontradas[i]);
+        sprintf(nombreArchivo, "datos/comandas_%s.dat", fechasEncontradas[i]); //en teoria se arregla el bug y se ordena 
         ordenarPlanillaDia(nombreArchivo); 
     }
 	
@@ -431,20 +431,40 @@ void ordenarPlanillaDia(const char* nombreArchivo) {
     Comanda c1, c2;
 
     for (int i = 0; i < cantRegistros - 1; i++) {
-        for (int j = i + 1; j < cantRegistros; j++) {
-            fseek(f, i * sizeof(Comanda), SEEK_SET);
-            fread(&c1, sizeof(Comanda), 1, f);
+        int posMinimo = i;
+        
+        // Buscamos el menor idMozo desde la posición i
+        fseek(f, i * sizeof(Comanda), SEEK_SET);
+        fread(&c1, sizeof(Comanda), 1, f);
+        int minId = c1.idMozo;
 
+        for (int j = i + 1; j < cantRegistros; j++) {
             fseek(f, j * sizeof(Comanda), SEEK_SET);
             fread(&c2, sizeof(Comanda), 1, f);
-
-            if (c1.idMozo > c2.idMozo) {
-                fseek(f, i * sizeof(Comanda), SEEK_SET);
-                fwrite(&c2, sizeof(Comanda), 1, f);
-
-                fseek(f, j * sizeof(Comanda), SEEK_SET);
-                fwrite(&c1, sizeof(Comanda), 1, f);
+            
+            if (c2.idMozo < minId) {
+                minId = c2.idMozo;
+                posMinimo = j;
             }
+        }
+
+        // Si encontramos un id menor en otra posición, intercambiamos los registros
+        if (posMinimo != i) {
+            // Leemos el registro en la posición i
+            fseek(f, i * sizeof(Comanda), SEEK_SET);
+            fread(&c1, sizeof(Comanda), 1, f);
+            
+            // Leemos el registro que tiene el menor valor (en posMinimo)
+            fseek(f, posMinimo * sizeof(Comanda), SEEK_SET);
+            fread(&c2, sizeof(Comanda), 1, f);
+
+            // Escribimos el menor en la posición i
+            fseek(f, i * sizeof(Comanda), SEEK_SET);
+            fwrite(&c2, sizeof(Comanda), 1, f);
+            
+            // Escribimos el que estaba en i en la posición posMinimo
+            fseek(f, posMinimo * sizeof(Comanda), SEEK_SET);
+            fwrite(&c1, sizeof(Comanda), 1, f);
         }
     }
 
